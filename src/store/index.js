@@ -1,19 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+import storage from "redux-persist/lib/storage";
 import videoReducer from "./videoSlice";
 
 const persistConfig = {
-  key: "root",
+  key: "videos", // Changed from "root" to "videos"
   storage,
-  whitelist: ["videos"], // only videos reducer will be persisted
+  whitelist: ["likedVideos", "savedVideos"], // Specify which parts of state to persist
 };
 
 const persistedReducer = persistReducer(persistConfig, videoReducer);
 
 export const store = configureStore({
   reducer: {
-    videos: persistedReducer,
+    videos: persistedReducer, // Directly use the persisted reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
