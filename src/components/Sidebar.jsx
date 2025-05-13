@@ -1,13 +1,20 @@
-// src/components/Sidebar.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
-  const navItems = [
+  const mainNavItems = [
     { icon: '🏠', label: 'Home', path: '/' },
     { icon: '🔥', label: 'Trending', path: '/trending' },
     { icon: '🎮', label: 'Gaming', path: '/gaming' },
     { icon: '💾', label: 'Saved Videos', path: '/saved-videos' },
+  ];
+
+  const secondaryNavItems = [
+    { icon: '⭐', label: 'Get Premium' },
+    { icon: '⚙️', label: 'Settings' },
+    { icon: '📜', label: 'Report history' },
+    { icon: '❓', label: 'Help' },
+    { icon: '📩', label: 'Send feedback' },
   ];
 
   return (
@@ -19,8 +26,8 @@ const Sidebar = () => {
       </div>
 
       {/* Main Navigation */}
-      <ul className="space-y-1">
-        {navItems.map((item) => (
+      <ul className="space-y-1 mb-6">
+        {mainNavItems.map((item) => (
           <li key={item.path}>
             <Link
               to={item.path}
@@ -32,6 +39,37 @@ const Sidebar = () => {
           </li>
         ))}
       </ul>
+
+      {/* Premium & Settings Section */}
+      <div className="border-t border-gray-200 pt-4">
+        <ul className="space-y-1 mb-6">
+          {secondaryNavItems.map((item, index) => (
+            <li key={index}>
+              <button
+                className="flex items-center w-full p-3 text-gray-900 rounded-lg hover:bg-gray-100"
+                onClick={() => console.log(`${item.label} clicked`)}
+              >
+                <span className="text-xl mr-4">{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Footer/Copyright */}
+      <div className="text-xs text-gray-500 mt-8 px-3">
+        <div className="mb-2">© {new Date().getFullYear()} YouTube Clone</div>
+        <div className="space-x-2">
+          <span>About</span>
+          <span>|</span>
+          <span>Press</span>
+          <span>|</span>
+          <span>Copyright</span>
+          <span>|</span>
+          <span>Contact</span>
+        </div>
+      </div>
     </aside>
   );
 };
