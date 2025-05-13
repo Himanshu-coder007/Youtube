@@ -2,33 +2,71 @@
 import React, { useEffect, useState } from 'react';
 import { fetchHomeVideos } from '../api/videos';
 import VideoCard from '../components/VideoCard';
+import SearchBar from '../components/SearchBar';
 
 const Home = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetchHomeVideos()
-      .then(res => {
+    const getVideos = async () => {
+      try {
+        setLoading(true);
+        const res = await fetchHomeVideos(searchQuery);
         setVideos(res.data.videos || []);
         setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Error fetching home videos:', err);
         setError('Failed to load videos.');
         setLoading(false);
-      });
-  }, []);
+      }
+    };
 
-  if (loading) return <p className="p-4">Loading...</p>;
-  if (error) return <p className="p-4 text-red-500">{error}</p>;
+    getVideos();
+  }, [searchQuery]);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  if (loading) return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="p-4 text-red-500 text-center mt-8">
+      <p>{error}</p>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      >
+        Retry
+      </button>
+    </div>
+  );
 
   return (
-    <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {videos.map(video => (
-        <VideoCard key={video.id} video={video} />
-      ))}
+    <div className="p-6 w-full">
+      <div className="mb-6">
+        <SearchBar onSearch={handleSearch} />
+      </div>
+      
+      {videos.length === 0 ? (
+        <div className="text-center mt-12">
+          <p className="text-xl text-gray-600">No videos found</p>
+          <p className="text-gray-500">Try a different search term</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {videos.map(video => (
+            <VideoCard key={video.id} video={video} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
