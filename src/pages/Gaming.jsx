@@ -17,7 +17,18 @@ const Gaming = () => {
       try {
         setLoading(true);
         const res = await fetchGamingVideos();
-        setVideos(res.data.videos || []);
+        // Ensure videos have proper IDs and required fields
+        const processedVideos = (res.data.videos || []).map(video => ({
+          ...video,
+          id: video.id || Math.random().toString(36).substring(2, 9), // fallback ID if missing
+          views: video.view_count || 0,
+          timestamp: video.published_at || new Date().toISOString(),
+          channel: video.channel || {
+            name: 'Unknown Channel',
+            profile_image_url: 'https://via.placeholder.com/48'
+          }
+        }));
+        setVideos(processedVideos);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching gaming videos:', err);
@@ -140,7 +151,16 @@ const Gaming = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {videos.map(video => (
-            <VideoCard key={video.id} video={video} />
+            <VideoCard 
+              key={video.id} 
+              video={video}
+              id={video.id}
+              title={video.title}
+              thumbnail={video.thumbnail_url}
+              channel={video.channel}
+              views={video.views}
+              timestamp={video.timestamp}
+            />
           ))}
         </div>
       )}
