@@ -1,3 +1,4 @@
+// src/components/SearchBar.jsx
 import React, { useState } from 'react';
 
 const SearchBar = ({ onSearch }) => {
@@ -9,7 +10,7 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="flex-1">
       <div className="relative">
         <input
           type="text"
