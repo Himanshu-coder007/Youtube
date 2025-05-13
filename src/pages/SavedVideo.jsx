@@ -39,8 +39,8 @@ const SavedVideos = () => {
     return (
       <div className="p-4">
         <h1 className="text-2xl font-bold mb-6">Saved Videos</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, i) => (
             <div key={i} className="animate-pulse bg-gray-200 rounded-xl h-64"></div>
           ))}
         </div>
@@ -95,12 +95,11 @@ const SavedVideos = () => {
           <p className="text-gray-500">You haven't saved any videos yet</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {videos.map((video) => (
             <VideoCard 
               key={video.id} 
               video={video} 
-              // Add optional chaining in case video is undefined
               id={video?.id}
               title={video?.title}
               thumbnail={video?.thumbnail}
