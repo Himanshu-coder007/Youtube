@@ -1,10 +1,11 @@
 // src/App.js
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './pages/Layout';
-import Home from './pages/Home';
-import Trending from './pages/Trending';
-import Gaming from './pages/Gaming';
-import SavedVideo from './pages/SavedVideo';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./pages/Layout";
+import Home from "./pages/Home";
+import Trending from "./pages/Trending";
+import Gaming from "./pages/Gaming";
+import SavedVideo from "./pages/SavedVideo";
+import VideoDetail from "./pages/VideoDetail"; // ✅ Import this
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="trending" element={<Trending />} />
           <Route path="gaming" element={<Gaming />} />
           <Route path="saved-videos" element={<SavedVideo />} />
+          <Route path="videos/:id" element={<VideoDetail />} /> {/* ✅ Add this */}
         </Route>
       </Routes>
     </Router>
