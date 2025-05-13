@@ -1,4 +1,3 @@
-// src/pages/VideoDetail.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchVideoById } from "../api/videos";
@@ -9,7 +8,8 @@ const VideoDetail = () => {
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+  const [showPlayButton, setShowPlayButton] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -47,22 +47,37 @@ const VideoDetail = () => {
     try {
       if (videoRef.current) {
         await videoRef.current.play();
-        setAutoplayBlocked(false);
+        setIsPlaying(true);
+        setShowPlayButton(false);
       }
     } catch (err) {
-      console.log("Play failed:", err);
-      setAutoplayBlocked(true);
+      console.error("Play failed:", err);
+      setShowPlayButton(true);
+    }
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+    if (videoRef.current.paused) {
+      setShowPlayButton(true);
+    }
+  };
+
+  const handleVideoClick = () => {
+    if (videoRef.current.paused) {
+      handlePlay();
+    } else {
+      videoRef.current.pause();
     }
   };
 
   const handleCanPlay = () => {
-    // Only attempt autoplay if not already blocked
-    if (!autoplayBlocked) {
-      handlePlay().catch(() => {
-        // Autoplay was prevented - show play button
-        setAutoplayBlocked(true);
-      });
-    }
+    // Some browsers allow autoplay with sound if the video is muted
+    videoRef.current.muted = true;
+    handlePlay().catch(() => {
+      // Autoplay was prevented - show play button
+      setShowPlayButton(true);
+    });
   };
 
   if (loading) {
@@ -120,21 +135,26 @@ const VideoDetail = () => {
         <div className="relative aspect-w-16 aspect-h-9 bg-black rounded-lg overflow-hidden">
           <video
             ref={videoRef}
-            controls
+            controls={isPlaying}
             playsInline
-            className="w-full"
+            className="w-full cursor-pointer"
             poster={video.thumbnail_url}
+            onClick={handleVideoClick}
             onCanPlay={handleCanPlay}
-            onPlay={() => setAutoplayBlocked(false)}
+            onPlay={() => setIsPlaying(true)}
+            onPause={handlePause}
+            onEnded={handlePause}
           >
-            <source src={video.video_url} type="video/mp4" />
+            <source src={video.video_url} type={`video/${video.video_url.split('.').pop().split('?')[0]}`} />
             Your browser does not support the video tag.
           </video>
 
-          {autoplayBlocked && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          {showPlayButton && !isPlaying && (
+            <div 
+              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 cursor-pointer"
+              onClick={handleVideoClick}
+            >
               <button
-                onClick={handlePlay}
                 className="p-4 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all"
                 aria-label="Play video"
               >
@@ -164,7 +184,6 @@ const VideoDetail = () => {
         </div>
       </div>
 
-      {/* Rest of the video details UI remains the same */}
       <div className="mt-4">
         <h1 className="text-2xl font-bold">{video.title}</h1>
         <div className="flex items-center mt-2 text-sm text-gray-600">
