@@ -14,22 +14,22 @@ const SearchBar = ({ initialQuery = '', onSearch }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex-1">
+    <form onSubmit={handleSubmit} className="flex-1 max-w-2xl">
       <div className="relative">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search..."
-          className="w-full px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          className="w-full px-5 py-3 pr-12 text-gray-700 bg-white border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200"
         />
         <button
           type="submit"
-          className="absolute right-0 top-0 h-full px-6 bg-gray-100 border border-l-0 border-gray-300 rounded-r-full hover:bg-gray-200 focus:outline-none"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-300"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-500"
+            className="h-6 w-6 text-gray-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
