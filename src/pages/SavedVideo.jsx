@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectSavedVideos } from "../store/videoSlice";
 import VideoCard from "../components/VideoCard";
-import { fetchVideosByIds } from "../api/videos"; // You'll need to create this API function
+import { fetchVideosByIds } from "../api/videos";
 
 const SavedVideos = () => {
   const savedVideoIds = useSelector(selectSavedVideos);
@@ -14,9 +14,11 @@ const SavedVideos = () => {
     const fetchSavedVideos = async () => {
       try {
         setLoading(true);
-        if (savedVideoIds.length > 0) {
+        if (savedVideoIds?.length > 0) {
           const res = await fetchVideosByIds(savedVideoIds);
-          setVideos(res.data.videos || []);
+          // Ensure we have an array of videos with valid IDs
+          const validVideos = (res.data?.videos || []).filter(video => video?.id);
+          setVideos(validVideos);
         } else {
           setVideos([]);
         }
@@ -95,7 +97,17 @@ const SavedVideos = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {videos.map((video) => (
-            <VideoCard key={video.id} video={video} />
+            <VideoCard 
+              key={video.id} 
+              video={video} 
+              // Add optional chaining in case video is undefined
+              id={video?.id}
+              title={video?.title}
+              thumbnail={video?.thumbnail}
+              channel={video?.channel}
+              views={video?.views}
+              timestamp={video?.timestamp}
+            />
           ))}
         </div>
       )}

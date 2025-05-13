@@ -13,40 +13,75 @@ const LikedVideos = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchLikedVideos = async () => {
       try {
+        if (!isMounted) return;
+        
         setLoading(true);
-        if (likedVideoIds && likedVideoIds.length > 0) {
-          // Filter out any invalid IDs before making the API call
-          const validIds = likedVideoIds.filter(id => 
-            typeof id === 'string' && id.length > 0
-          );
-          
-          if (validIds.length > 0) {
-            const response = await fetchVideosByIds(validIds);
-            // Filter out any null or undefined videos from response
-            const validVideos = (response.data?.videos || []).filter(
-              video => video && video.id
-            );
-            setVideos(validVideos);
-          } else {
-            setVideos([]);
-          }
-        } else {
-          setVideos([]);
-        }
         setError("");
+        
+        // Check if we have valid liked video IDs
+        if (!likedVideoIds || likedVideoIds.length === 0) {
+          if (isMounted) setVideos([]);
+          return;
+        }
+
+        // Validate UUID format (36 characters)
+        const validIds = likedVideoIds.filter(
+          id => typeof id === 'string' && id.length === 36
+        );
+
+        if (validIds.length === 0) {
+          if (isMounted) setVideos([]);
+          return;
+        }
+
+        console.log("Fetching videos for IDs:", validIds);
+        const response = await fetchVideosByIds(validIds);
+        console.log("API Response:", response);
+        
+        // Handle different response formats
+        let videosData = [];
+        if (Array.isArray(response?.data?.videos)) {
+          videosData = response.data.videos;
+        } else if (response?.data) {
+          videosData = Object.values(response.data);
+        }
+
+        // Filter to only include videos that match our liked IDs
+        const validVideos = videosData.filter(
+          video => video && video.id && validIds.includes(video.id)
+        );
+
+        if (isMounted) {
+          setVideos(validVideos);
+          if (validIds.length > 0 && validVideos.length === 0) {
+            setError("Videos not found. They may have been removed.");
+          }
+        }
       } catch (err) {
         console.error("Error fetching liked videos:", err);
-        setError("Failed to load liked videos. Please try again.");
-        setVideos([]);
+        if (isMounted) {
+          setError("Failed to load liked videos. Please try again.");
+          setVideos([]);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchLikedVideos();
+
+    return () => {
+      isMounted = false;
+    };
   }, [likedVideoIds]);
+
+  const countLikedVideos = () => {
+    return likedVideoIds?.length || videos.length;
+  };
 
   if (loading) {
     return (
@@ -111,19 +146,61 @@ const LikedVideos = () => {
     );
   }
 
+  const hasLikedVideosInStore = likedVideoIds?.length > 0;
+  const hasLoadedVideos = videos.length > 0;
+
   return (
     <div className="p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold">Liked Videos</h1>
-          {videos.length > 0 && (
+          {hasLikedVideosInStore && (
             <span className="text-sm text-gray-500">
-              {videos.length} {videos.length === 1 ? "video" : "videos"}
+              {countLikedVideos()} {countLikedVideos() === 1 ? "video" : "videos"}
             </span>
           )}
         </div>
 
-        {videos.length === 0 ? (
+        {hasLikedVideosInStore && !hasLoadedVideos ? (
+          <div className="text-center py-16 bg-white rounded-lg shadow-sm">
+            <div className="max-w-md mx-auto">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-20 w-20 mx-auto text-yellow-500 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <h3 className="text-lg font-medium text-gray-800 mb-2">
+                Videos not loaded
+              </h3>
+              <p className="text-gray-500 mb-6">
+                We found {likedVideoIds.length} liked videos but couldn't load them.
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Refresh
+                </button>
+                <button
+                  onClick={() => navigate("/")}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                >
+                  Browse Videos
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : !hasLikedVideosInStore ? (
           <div className="text-center py-16 bg-white rounded-lg shadow-sm">
             <div className="max-w-md mx-auto">
               <svg
@@ -160,7 +237,7 @@ const LikedVideos = () => {
               <VideoCard 
                 key={video.id} 
                 video={video} 
-                isLiked={true} // Pass isLiked prop to show the liked state
+                isLiked={true}
               />
             ))}
           </div>
