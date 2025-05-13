@@ -3,6 +3,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
+  const navItems = [
+    { icon: '🏠', label: 'Home', path: '/' },
+    { icon: '🔥', label: 'Trending', path: '/trending' },
+    { icon: '🎮', label: 'Gaming', path: '/gaming' },
+    { icon: '💾', label: 'Saved Videos', path: '/saved-videos' },
+  ];
+
   return (
     <aside className="w-64 h-screen bg-white p-4 fixed top-0 left-0 shadow-sm border-r border-gray-200 overflow-y-auto">
       {/* YouTube Logo and Title */}
@@ -13,42 +20,17 @@ const Sidebar = () => {
 
       {/* Main Navigation */}
       <ul className="space-y-1">
-        <li>
-          <Link 
-            to="/" 
-            className="flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100"
-          >
-            <span className="text-xl mr-4">🏠</span>
-            <span>Home</span>
-          </Link>
-        </li>
-        <li>
-          <Link 
-            to="/trending" 
-            className="flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100"
-          >
-            <span className="text-xl mr-4">🔥</span>
-            <span>Trending</span>
-          </Link>
-        </li>
-        <li>
-          <Link 
-            to="/gaming" 
-            className="flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100"
-          >
-            <span className="text-xl mr-4">🎮</span>
-            <span>Gaming</span>
-          </Link>
-        </li>
-        <li>
-          <Link 
-            to="/saved-videos" 
-            className="flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100"
-          >
-            <span className="text-xl mr-4">💾</span>
-            <span>Saved Videos</span>
-          </Link>
-        </li>
+        {navItems.map((item) => (
+          <li key={item.path}>
+            <Link
+              to={item.path}
+              className="flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100"
+            >
+              <span className="text-xl mr-4">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          </li>
+        ))}
       </ul>
     </aside>
   );
