@@ -1,8 +1,12 @@
 // src/components/SearchBar.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const SearchBar = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
+const SearchBar = ({ initialQuery = '', onSearch }) => {
+  const [query, setQuery] = useState(initialQuery);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

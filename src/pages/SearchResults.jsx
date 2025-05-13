@@ -1,33 +1,43 @@
-// src/pages/Home.jsx
+// src/pages/SearchResults.jsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchHomeVideos } from '../api/videos';
 import VideoCard from '../components/VideoCard';
 import SearchBar from '../components/SearchBar';
 
-const Home = () => {
+const SearchResults = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // Get search query from URL
+  const searchParams = new URLSearchParams(location.search);
+  const searchQuery = searchParams.get('q') || '';
 
   useEffect(() => {
     const getVideos = async () => {
       try {
         setLoading(true);
-        const res = await fetchHomeVideos();
+        const res = await fetchHomeVideos(searchQuery);
         setVideos(res.data.videos || []);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching home videos:', err);
-        setError('Failed to load videos.');
+        console.error('Error fetching search results:', err);
+        setError('Failed to load search results.');
         setLoading(false);
       }
     };
 
-    getVideos();
-  }, []);
+    if (searchQuery) {
+      getVideos();
+    } else {
+      setVideos([]);
+      setLoading(false);
+    }
+  }, [searchQuery]);
 
   const handleSearch = (query) => {
     navigate(`/search?q=${encodeURIComponent(query)}`);
@@ -88,7 +98,7 @@ const Home = () => {
       <div className="flex justify-between items-center mb-6">
         <div className="flex-1 max-w-2xl">
           <div className="flex items-center">
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar initialQuery={searchQuery} onSearch={handleSearch} />
             <button
               onClick={handleVoiceSearch}
               className={`ml-2 p-2 rounded-full ${isListening ? 'bg-red-100 animate-pulse' : 'bg-gray-100 hover:bg-gray-200'}`}
@@ -131,11 +141,12 @@ const Home = () => {
         </div>
       </div>
       
-      <h1 className="text-2xl font-bold mb-6">Recommended Videos</h1>
+      <h1 className="text-2xl font-bold mb-6">Search Results for "{searchQuery}"</h1>
       
       {videos.length === 0 ? (
         <div className="text-center mt-12">
           <p className="text-xl text-gray-600">No videos found</p>
+          <p className="text-gray-500">Try a different search term</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -148,4 +159,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default SearchResults; // Make sure this line is present
