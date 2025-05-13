@@ -21,3 +21,16 @@ export const fetchHomeVideos = (search = "") =>
 export const fetchTrendingVideos = () => axiosInstance.get("/trending");
 export const fetchGamingVideos = () => axiosInstance.get("/gaming");
 export const fetchVideoById = (id) => axiosInstance.get(`/${id}`);
+
+// ✅ Fetch multiple videos by their IDs
+export const fetchVideosByIds = (ids) => {
+  // If there's a bulk endpoint, use that
+  // Otherwise, fetch videos one by one and combine results
+  return Promise.all(ids.map((id) => fetchVideoById(id))).then((responses) => {
+    return {
+      data: {
+        videos: responses.map((res) => res.data.video),
+      },
+    };
+  });
+};

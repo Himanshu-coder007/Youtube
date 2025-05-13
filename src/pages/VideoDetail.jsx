@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchVideoById } from "../api/videos";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleLikeVideo, toggleSaveVideo, selectLikedVideos, selectSavedVideos } from "../store/videoSlice";
 
 const VideoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -12,6 +15,12 @@ const VideoDetail = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef(null);
+
+  // Get liked and saved videos from Redux store
+  const likedVideos = useSelector(selectLikedVideos);
+  const savedVideos = useSelector(selectSavedVideos);
+  const isLiked = likedVideos.includes(id);
+  const isSaved = savedVideos.includes(id);
 
   useEffect(() => {
     const getVideoDetails = async () => {
@@ -89,6 +98,14 @@ const VideoDetail = () => {
     handlePlay().catch(() => {
       setShowPlayButton(true);
     });
+  };
+
+  const handleLike = () => {
+    dispatch(toggleLikeVideo(id));
+  };
+
+  const handleSave = () => {
+    dispatch(toggleSaveVideo(id));
   };
 
   const formatDate = (dateString) => {
@@ -374,6 +391,50 @@ const VideoDetail = () => {
             </div>
             <button className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors text-sm font-medium">
               Subscribe
+            </button>
+          </div>
+
+          {/* Like and Save Buttons */}
+          <div className="flex space-x-2 mb-6">
+            <button
+              onClick={handleLike}
+              className={`flex items-center px-4 py-2 rounded-full ${isLiked ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700'} hover:bg-gray-200 transition-colors`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill={isLiked ? 'currentColor' : 'none'}
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+              {isLiked ? 'Liked' : 'Like'}
+            </button>
+            <button
+              onClick={handleSave}
+              className={`flex items-center px-4 py-2 rounded-full ${isSaved ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-700'} hover:bg-gray-200 transition-colors`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill={isSaved ? 'currentColor' : 'none'}
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                />
+              </svg>
+              {isSaved ? 'Saved' : 'Save'}
             </button>
           </div>
 
