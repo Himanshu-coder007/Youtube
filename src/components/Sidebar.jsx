@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.svg'; // Adjust the path according to your project structure
 
 const Sidebar = () => {
   const mainNavItems = [
@@ -22,7 +23,11 @@ const Sidebar = () => {
     <aside className="w-64 h-screen bg-white p-4 fixed top-0 left-0 shadow-sm border-r border-gray-200 overflow-y-auto">
       {/* YouTube Logo and Title */}
       <div className="flex items-center mb-6 pl-2">
-        <div className="text-red-600 text-3xl mr-2">▶</div>
+        <img 
+          src={logo} 
+          alt="YouTube Logo" 
+          className="h-8 w-auto mr-2" 
+        />
         <h1 className="text-xl font-bold text-gray-900">YouTube</h1>
       </div>
 
