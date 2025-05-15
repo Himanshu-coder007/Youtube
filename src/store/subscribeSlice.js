@@ -27,7 +27,9 @@ const subscribeSlice = createSlice({
         });
       } else {
         // Remove from subscriptions
-        state.subscribedChannels.splice(index, 1);
+        state.subscribedChannels = state.subscribedChannels.filter(
+          (channel) => channel.id !== channelId
+        );
       }
     },
   },
