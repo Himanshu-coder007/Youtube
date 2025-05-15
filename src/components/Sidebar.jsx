@@ -1,8 +1,11 @@
-import React from 'react';
+// src/components/Sidebar.jsx
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.svg'; // Adjust the path according to your project structure
+import logo from '../assets/logo.svg';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Sidebar = () => {
+  const { theme } = useContext(ThemeContext);
   const mainNavItems = [
     { icon: '🏠', label: 'Home', path: '/' },
     { icon: '🔥', label: 'Trending', path: '/trending' },
@@ -20,7 +23,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 h-screen bg-white p-4 fixed top-0 left-0 shadow-sm border-r border-gray-200 overflow-y-auto">
+    <aside className={`w-64 h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} p-4 fixed top-0 left-0 shadow-sm border-r ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} overflow-y-auto`}>
       {/* YouTube Logo and Title */}
       <div className="flex items-center mb-6 pl-2">
         <img 
@@ -28,7 +31,7 @@ const Sidebar = () => {
           alt="YouTube Logo" 
           className="h-8 w-auto mr-2" 
         />
-        <h1 className="text-xl font-bold text-gray-900">YouTube</h1>
+        <h1 className="text-xl font-bold">YouTube</h1>
       </div>
 
       {/* Main Navigation */}
@@ -37,7 +40,7 @@ const Sidebar = () => {
           <li key={item.path}>
             <Link
               to={item.path}
-              className="flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100"
+              className={`flex items-center p-3 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
             >
               <span className="text-xl mr-4">{item.icon}</span>
               <span>{item.label}</span>
@@ -47,12 +50,12 @@ const Sidebar = () => {
       </ul>
 
       {/* Premium & Settings Section */}
-      <div className="border-t border-gray-200 pt-4">
+      <div className={`border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} pt-4`}>
         <ul className="space-y-1 mb-6">
           {secondaryNavItems.map((item, index) => (
             <li key={index}>
               <button
-                className="flex items-center w-full p-3 text-gray-900 rounded-lg hover:bg-gray-100"
+                className={`flex items-center w-full p-3 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
                 onClick={() => console.log(`${item.label} clicked`)}
               >
                 <span className="text-xl mr-4">{item.icon}</span>
@@ -64,7 +67,7 @@ const Sidebar = () => {
       </div>
 
       {/* Footer/Copyright */}
-      <div className="text-xs text-gray-500 mt-8 px-3">
+      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-8 px-3`}>
         <div className="mb-2">© {new Date().getFullYear()} YouTube Clone</div>
         <div className="space-x-2">
           <span>About</span>

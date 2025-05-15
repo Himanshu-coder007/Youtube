@@ -7,9 +7,11 @@ import SavedVideo from "./pages/SavedVideo";
 import LikedVideos from "./pages/LikedVideos";
 import VideoDetail from "./pages/VideoDetail";
 import SearchResults from "./pages/SearchResults";
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
+     <ThemeProvider>
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -23,6 +25,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 }
 

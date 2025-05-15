@@ -1,7 +1,7 @@
 // src/components/SearchBar.jsx
 import React, { useState, useEffect } from 'react';
 
-const SearchBar = ({ initialQuery = '', onSearch }) => {
+const SearchBar = ({ initialQuery = '', onSearch, theme }) => {
   const [query, setQuery] = useState(initialQuery);
 
   useEffect(() => {
@@ -21,18 +21,18 @@ const SearchBar = ({ initialQuery = '', onSearch }) => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search..."
-          className="w-full px-5 py-3 pr-12 text-gray-700 bg-white border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200"
+          className={`w-full px-5 py-3 pr-12 ${theme === 'dark' ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'} border rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200`}
         />
         <button
           type="submit"
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-300"
+          className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-100'} focus:outline-none focus:ring-1 ${theme === 'dark' ? 'focus:ring-gray-500' : 'focus:ring-gray-300'}`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-500"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor"
+            stroke={theme === 'dark' ? 'white' : 'currentColor'}
           >
             <path
               strokeLinecap="round"

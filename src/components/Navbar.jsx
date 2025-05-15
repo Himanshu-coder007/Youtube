@@ -1,13 +1,16 @@
 // src/components/Navbar.jsx
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import { MdApps } from 'react-icons/md';
 import { FaVideo } from 'react-icons/fa';
+import { FiSun, FiMoon } from 'react-icons/fi';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Navbar = ({ initialQuery = '' }) => {
   const [isListening, setIsListening] = useState(false);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const handleSearch = (query) => {
     navigate(`/search?q=${encodeURIComponent(query)}`);
@@ -46,13 +49,13 @@ const Navbar = ({ initialQuery = '' }) => {
   };
 
   return (
-    <div className="flex justify-between items-center mb-6">
+    <div className={`flex justify-between items-center mb-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
       <div className="flex-1 flex justify-center">
         <div className="flex items-center w-full max-w-2xl">
-          <SearchBar initialQuery={initialQuery} onSearch={handleSearch} />
+          <SearchBar initialQuery={initialQuery} onSearch={handleSearch} theme={theme} />
           <button
             onClick={handleVoiceSearch}
-            className={`ml-2 p-2 rounded-full ${isListening ? 'bg-red-100 animate-pulse' : 'bg-gray-100 hover:bg-gray-200'}`}
+            className={`ml-2 p-2 rounded-full ${isListening ? 'bg-red-100 animate-pulse' : theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'}`}
             title="Voice Search"
           >
             <svg
@@ -60,7 +63,7 @@ const Navbar = ({ initialQuery = '' }) => {
               className="h-6 w-6 text-gray-600"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              stroke={theme === 'dark' ? 'white' : 'currentColor'}
             >
               <path
                 strokeLinecap="round"
@@ -73,19 +76,29 @@ const Navbar = ({ initialQuery = '' }) => {
         </div>
       </div>
       <div className="flex items-center space-x-4">
-        <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
-          <MdApps className="h-5 w-5 text-gray-600" />
+        <button 
+          onClick={toggleTheme}
+          className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-300 focus:outline-none"
+        >
+          {theme === 'dark' ? (
+            <FiSun className="h-5 w-5 text-yellow-400" />
+          ) : (
+            <FiMoon className="h-5 w-5 text-gray-600" />
+          )}
         </button>
-        <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
-          <FaVideo className="h-5 w-5 text-gray-600" />
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
+          <MdApps className="h-5 w-5" style={{ color: theme === 'dark' ? 'white' : 'gray' }} />
         </button>
-        <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
+          <FaVideo className="h-5 w-5" style={{ color: theme === 'dark' ? 'white' : 'gray' }} />
+        </button>
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-600"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor"
+            stroke={theme === 'dark' ? 'white' : 'currentColor'}
           >
             <path
               strokeLinecap="round"
@@ -95,13 +108,13 @@ const Navbar = ({ initialQuery = '' }) => {
             />
           </svg>
         </button>
-        <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-600"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor"
+            stroke={theme === 'dark' ? 'white' : 'currentColor'}
           >
             <path
               strokeLinecap="round"
