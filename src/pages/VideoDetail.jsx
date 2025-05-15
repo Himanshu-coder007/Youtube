@@ -5,6 +5,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleLikeVideo, toggleSaveVideo, selectLikedVideos, selectSavedVideos } from "../store/videoSlice";
 import CommentsSection from "../components/CommentsSection";
 
+// Custom hook for managing subscriptions
+const useSubscriptions = () => {
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const toggleSubscribe = () => {
+    setIsSubscribed(!isSubscribed);
+  };
+
+  return { isSubscribed, toggleSubscribe };
+};
+
 const VideoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,6 +33,9 @@ const VideoDetail = () => {
   const savedVideos = useSelector(selectSavedVideos);
   const isLiked = likedVideos.includes(id);
   const isSaved = savedVideos.includes(id);
+
+  // Use custom subscription hook
+  const { isSubscribed, toggleSubscribe } = useSubscriptions();
 
   useEffect(() => {
     const getVideoDetails = async () => {
@@ -376,20 +390,32 @@ const VideoDetail = () => {
           </div>
 
           {/* Channel Info */}
-          <div className="flex items-start mb-6 pb-6 border-b border-gray-100">
-            <div className="flex-shrink-0 mr-4">
-              <img
-                src={video.channel.profile_image_url}
-                alt={video.channel.name}
-                className="h-12 w-12 rounded-full object-cover"
-              />
+          <div className="flex items-start justify-between mb-6 pb-6 border-b border-gray-100">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 mr-4">
+                <img
+                  src={video.channel.profile_image_url}
+                  alt={video.channel.name}
+                  className="h-12 w-12 rounded-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-gray-900">{video.channel.name}</h3>
+                <p className="text-sm text-gray-500">
+                  {formatViewCount(video.channel.subscriber_count)} subscribers
+                </p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900">{video.channel.name}</h3>
-              <p className="text-sm text-gray-500">
-                {formatViewCount(video.channel.subscriber_count)} subscribers
-              </p>
-            </div>
+            <button
+              onClick={toggleSubscribe}
+              className={`px-4 py-2 rounded-full font-medium ${
+                isSubscribed 
+                  ? 'bg-gray-200 text-gray-800 hover:bg-gray-300' 
+                  : 'bg-red-600 text-white hover:bg-red-700'
+              } transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
+            >
+              {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+            </button>
           </div>
 
           {/* Like and Save Buttons */}
@@ -446,7 +472,7 @@ const VideoDetail = () => {
         </div>
 
         {/* Comments Section */}
-        <CommentsSection channelId={video.channel.id} />
+        <CommentsSection videoId={id} channelId={video.channel.id} />
       </div>
     </div>
   );
