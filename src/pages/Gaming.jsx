@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { fetchGamingVideos } from '../api/videos';
 import VideoCard from '../components/VideoCard';
 import SearchBar from '../components/SearchBar';
+import { MdApps } from 'react-icons/md';
+import { FaVideo } from 'react-icons/fa';
 
 const Gaming = () => {
   const [videos, setVideos] = useState([]);
@@ -123,6 +125,12 @@ const Gaming = () => {
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
+            <MdApps className="h-5 w-5 text-gray-600" />
+          </button>
+          <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
+            <FaVideo className="h-5 w-5 text-gray-600" />
+          </button>
           <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none">
             <svg
               xmlns="http://www.w3.org/2000/svg"
