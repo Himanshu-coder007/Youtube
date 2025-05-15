@@ -1,8 +1,11 @@
 // src/components/VideoCard.jsx
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { ThemeContext } from "../context/ThemeContext";
 
 const VideoCard = ({ video }) => {
+  const { theme } = useContext(ThemeContext);
+
   // Format view count (e.g., 1000 -> 1K, 1000000 -> 1M)
   const formatViewCount = (count) => {
     if (count >= 1000000) {
@@ -27,7 +30,7 @@ const VideoCard = ({ video }) => {
   };
 
   return (
-    <div className="w-full mb-6 cursor-pointer hover:scale-[1.02] transition-transform duration-200">
+    <div className={`w-full mb-6 cursor-pointer hover:scale-[1.02] transition-transform duration-200 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
       <Link to={`/videos/${video.id}`} className="block">
         {/* Thumbnail with duration */}
         <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden bg-gray-200">
@@ -56,13 +59,13 @@ const VideoCard = ({ video }) => {
 
           {/* Video details */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
+            <h3 className={`text-sm font-medium line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {video.title}
             </h3>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
               {video?.channel?.name || "Unknown Channel"}
             </p>
-            <div className="flex items-center text-xs text-gray-500 mt-1">
+            <div className={`flex items-center text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
               <span>{formatViewCount(video.view_count)}</span>
               <span className="mx-1">•</span>
               <span>{formatPublishTime(video.published_at)}</span>
