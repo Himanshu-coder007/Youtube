@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchVideoById } from "../api/videos";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,7 @@ import {
   selectSavedVideos,
 } from "../store/videoSlice";
 import CommentsSection from "../components/CommentsSection";
+import { ThemeContext } from "../context/ThemeContext";
 
 // Custom hook for managing subscriptions
 const useSubscriptions = () => {
@@ -22,6 +23,7 @@ const useSubscriptions = () => {
 };
 
 const VideoDetail = () => {
+  const { theme } = useContext(ThemeContext);
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -32,7 +34,7 @@ const VideoDetail = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef(null);
-  const [isDisliked, setIsDisliked] = useState(false); // New state for dislike
+  const [isDisliked, setIsDisliked] = useState(false);
 
   // Get liked and saved videos from Redux store
   const likedVideos = useSelector(selectLikedVideos);
@@ -114,7 +116,6 @@ const VideoDetail = () => {
   const handleCanPlay = () => {
     if (!videoRef.current) return;
 
-    // Try to autoplay with sound muted
     videoRef.current.muted = true;
     handlePlay().catch(() => {
       setShowPlayButton(true);
@@ -123,14 +124,14 @@ const VideoDetail = () => {
 
   const handleLike = () => {
     dispatch(toggleLikeVideo(id));
-    setIsDisliked(false); // Remove dislike when liking
+    setIsDisliked(false);
   };
 
   const handleDislike = () => {
     if (isLiked) {
-      dispatch(toggleLikeVideo(id)); // Unlike if already liked
+      dispatch(toggleLikeVideo(id));
     }
-    setIsDisliked(!isDisliked); // Toggle dislike state
+    setIsDisliked(!isDisliked);
   };
 
   const handleSave = () => {
@@ -162,23 +163,43 @@ const VideoDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${
+        theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+      }`}>
         <div className="w-full max-w-4xl">
-          <div className="animate-pulse bg-gray-200 rounded-lg h-96 w-full mb-6"></div>
+          <div className={`animate-pulse rounded-lg h-96 w-full mb-6 ${
+            theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+          }`}></div>
           <div className="space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div className={`h-8 rounded w-3/4 ${
+              theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+            }`}></div>
+            <div className={`h-4 rounded w-1/2 ${
+              theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+            }`}></div>
             <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 bg-gray-200 rounded-full"></div>
+              <div className={`h-10 w-10 rounded-full ${
+                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+              }`}></div>
               <div className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-32"></div>
-                <div className="h-3 bg-gray-200 rounded w-24"></div>
+                <div className={`h-4 rounded w-32 ${
+                  theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+                }`}></div>
+                <div className={`h-3 rounded w-24 ${
+                  theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+                }`}></div>
               </div>
             </div>
             <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-              <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+              <div className={`h-4 rounded ${
+                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+              }`}></div>
+              <div className={`h-4 rounded w-5/6 ${
+                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+              }`}></div>
+              <div className={`h-4 rounded w-4/6 ${
+                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+              }`}></div>
             </div>
           </div>
         </div>
@@ -188,9 +209,15 @@ const VideoDetail = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-        <div className="max-w-md text-center bg-white p-8 rounded-xl shadow-sm">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${
+        theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+      }`}>
+        <div className={`max-w-md text-center p-8 rounded-xl shadow-sm ${
+          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        }`}>
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+            theme === 'dark' ? 'bg-red-900' : 'bg-red-100'
+          }`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-8 w-8 text-red-600"
@@ -206,10 +233,14 @@ const VideoDetail = () => {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
+          <h2 className={`text-xl font-bold mb-2 ${
+            theme === 'dark' ? 'text-white' : 'text-gray-800'
+          }`}>
             Oops! Something went wrong
           </h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <p className={`mb-6 ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>{error}</p>
           <button
             onClick={() => navigate(-1)}
             className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
@@ -223,9 +254,15 @@ const VideoDetail = () => {
 
   if (!video) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-        <div className="max-w-md text-center bg-white p-8 rounded-xl shadow-sm">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className={`flex flex-col items-center justify-center min-h-screen p-4 ${
+        theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+      }`}>
+        <div className={`max-w-md text-center p-8 rounded-xl shadow-sm ${
+          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        }`}>
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+            theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+          }`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-8 w-8 text-gray-500"
@@ -241,15 +278,21 @@ const VideoDetail = () => {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
+          <h2 className={`text-xl font-bold mb-2 ${
+            theme === 'dark' ? 'text-white' : 'text-gray-800'
+          }`}>
             No Video Found
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className={`mb-6 ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
             The video you're looking for doesn't exist or was removed.
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            className={`px-6 py-2 rounded-lg text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 focus:ring-gray-500' : 'bg-gray-800 hover:bg-gray-700 focus:ring-gray-500'
+            }`}
           >
             Browse Videos
           </button>
@@ -261,12 +304,16 @@ const VideoDetail = () => {
   const embedUrl = getYouTubeEmbedUrl(video.video_url);
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-12">
+    <div className={`min-h-screen pb-12 ${
+      theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+    }`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-600 hover:text-gray-900 mt-6 mb-4 transition-colors"
+          className={`flex items-center mt-6 mb-4 transition-colors ${
+            theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+          }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -287,8 +334,6 @@ const VideoDetail = () => {
         <div className="bg-black rounded-xl overflow-hidden shadow-xl mb-8">
           {embedUrl ? (
             <div className="relative pt-[56.25%]">
-              {" "}
-              {/* 16:9 aspect ratio */}
               <iframe
                 src={
                   showPlayButton
@@ -304,8 +349,6 @@ const VideoDetail = () => {
             </div>
           ) : (
             <div className="relative pt-[56.25%]">
-              {" "}
-              {/* 16:9 aspect ratio */}
               <video
                 ref={videoRef}
                 controls={isPlaying}
@@ -407,19 +450,27 @@ const VideoDetail = () => {
         </div>
 
         {/* Video Info */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+        <div className={`rounded-xl shadow-sm p-6 mb-8 ${
+          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        }`}>
+          <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
             {video.title}
           </h1>
 
-          <div className="flex flex-wrap items-center text-sm text-gray-600 mb-6">
+          <div className={`flex flex-wrap items-center text-sm mb-6 ${
+            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+          }`}>
             <span>{formatViewCount(video.view_count)}</span>
             <span className="mx-2">•</span>
             <span>{formatDate(video.published_at)}</span>
           </div>
 
           {/* Channel Info */}
-          <div className="flex items-start justify-between mb-6 pb-6 border-b border-gray-100">
+          <div className={`flex items-start justify-between mb-6 pb-6 ${
+            theme === 'dark' ? 'border-gray-700' : 'border-gray-100'
+          } border-b`}>
             <div className="flex items-start">
               <div className="flex-shrink-0 mr-4">
                 <img
@@ -429,21 +480,27 @@ const VideoDetail = () => {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900">
+                <h3 className={`font-semibold ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
                   {video.channel.name}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className={`text-sm ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                }`}>
                   {formatViewCount(video.channel.subscriber_count)} subscribers
                 </p>
               </div>
             </div>
             <button
               onClick={toggleSubscribe}
-              className={`px-4 py-2 rounded-full font-medium ${
+              className={`px-4 py-2 rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isSubscribed
-                  ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                  : "bg-red-600 text-white hover:bg-red-700"
-              } transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
+                  ? theme === 'dark'
+                    ? 'bg-gray-700 text-white hover:bg-gray-600 focus:ring-gray-500'
+                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-300'
+                  : 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
+              }`}
             >
               {isSubscribed ? "Unsubscribe" : "Subscribe"}
             </button>
@@ -454,11 +511,15 @@ const VideoDetail = () => {
             {/* Like Button */}
             <button
               onClick={handleLike}
-              className={`flex items-center px-4 py-2 rounded-full ${
+              className={`flex items-center px-4 py-2 rounded-full transition-colors ${
                 isLiked
-                  ? "bg-blue-100 text-blue-600"
-                  : "bg-gray-100 text-gray-700"
-              } hover:bg-gray-200 transition-colors`}
+                  ? theme === 'dark'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'bg-blue-100 text-blue-600'
+                  : theme === 'dark'
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -480,11 +541,15 @@ const VideoDetail = () => {
             {/* Dislike Button */}
             <button
               onClick={handleDislike}
-              className={`flex items-center px-4 py-2 rounded-full ${
+              className={`flex items-center px-4 py-2 rounded-full transition-colors ${
                 isDisliked
-                  ? "bg-blue-100 text-blue-600"
-                  : "bg-gray-100 text-gray-700"
-              } hover:bg-gray-200 transition-colors`}
+                  ? theme === 'dark'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'bg-blue-100 text-blue-600'
+                  : theme === 'dark'
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -506,11 +571,15 @@ const VideoDetail = () => {
             {/* Save Button */}
             <button
               onClick={handleSave}
-              className={`flex items-center px-4 py-2 rounded-full ${
+              className={`flex items-center px-4 py-2 rounded-full transition-colors ${
                 isSaved
-                  ? "bg-blue-100 text-blue-600"
-                  : "bg-gray-100 text-gray-700"
-              } hover:bg-gray-200 transition-colors`}
+                  ? theme === 'dark'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'bg-blue-100 text-blue-600'
+                  : theme === 'dark'
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -530,7 +599,11 @@ const VideoDetail = () => {
             </button>
 
             {/* Download Button */}
-            <button className="flex items-center px-4 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+            <button className={`flex items-center px-4 py-2 rounded-full transition-colors ${
+              theme === 'dark'
+                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-2"
@@ -549,7 +622,11 @@ const VideoDetail = () => {
             </button>
 
             {/* Share Button */}
-            <button className="flex items-center px-4 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+            <button className={`flex items-center px-4 py-2 rounded-full transition-colors ${
+              theme === 'dark'
+                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-2"
@@ -570,10 +647,14 @@ const VideoDetail = () => {
 
           {/* Video Description */}
           <div className="prose max-w-none">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <h3 className={`text-lg font-semibold mb-3 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
               Description
             </h3>
-            <p className="whitespace-pre-line text-gray-700">
+            <p className={`whitespace-pre-line ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            }`}>
               {video.description || "No description available."}
             </p>
           </div>
