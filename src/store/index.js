@@ -1,20 +1,25 @@
-import { configureStore } from "@reduxjs/toolkit";
+// src/store/store.js
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import videoReducer from "./videoSlice";
+import subscribeReducer from "./subscribeSlice";
 
 const persistConfig = {
-  key: "videos", // Changed from "root" to "videos"
+  key: "root",
   storage,
-  whitelist: ["likedVideos", "savedVideos"], // Specify which parts of state to persist
+  whitelist: ["videos", "subscriptions"],
 };
 
-const persistedReducer = persistReducer(persistConfig, videoReducer);
+const rootReducer = combineReducers({
+  videos: videoReducer,
+  subscriptions: subscribeReducer,
+});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    videos: persistedReducer, // Directly use the persisted reducer
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

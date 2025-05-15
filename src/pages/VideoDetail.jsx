@@ -8,19 +8,9 @@ import {
   selectLikedVideos,
   selectSavedVideos,
 } from "../store/videoSlice";
+import { toggleSubscribe, selectSubscribedChannels } from "../store/subscribeSlice";
 import CommentsSection from "../components/CommentsSection";
 import { ThemeContext } from "../context/ThemeContext";
-
-// Custom hook for managing subscriptions
-const useSubscriptions = () => {
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  const toggleSubscribe = () => {
-    setIsSubscribed(!isSubscribed);
-  };
-
-  return { isSubscribed, toggleSubscribe };
-};
 
 const VideoDetail = () => {
   const { theme } = useContext(ThemeContext);
@@ -36,14 +26,13 @@ const VideoDetail = () => {
   const videoRef = useRef(null);
   const [isDisliked, setIsDisliked] = useState(false);
 
-  // Get liked and saved videos from Redux store
+  // Get liked, saved videos and subscribed channels from Redux store
   const likedVideos = useSelector(selectLikedVideos);
   const savedVideos = useSelector(selectSavedVideos);
+  const subscribedChannels = useSelector(selectSubscribedChannels);
   const isLiked = likedVideos.includes(id);
   const isSaved = savedVideos.includes(id);
-
-  // Use custom subscription hook
-  const { isSubscribed, toggleSubscribe } = useSubscriptions();
+  const isSubscribed = subscribedChannels.some(channel => channel.id === video?.channel?.id);
 
   useEffect(() => {
     const getVideoDetails = async () => {
@@ -136,6 +125,18 @@ const VideoDetail = () => {
 
   const handleSave = () => {
     dispatch(toggleSaveVideo(id));
+  };
+
+  const handleSubscribe = () => {
+    if (!video) return;
+    
+    dispatch(
+      toggleSubscribe({
+        id: video.channel.id,
+        name: video.channel.name,
+        image: video.channel.profile_image_url,
+      })
+    );
   };
 
   const formatDate = (dateString) => {
@@ -493,7 +494,7 @@ const VideoDetail = () => {
               </div>
             </div>
             <button
-              onClick={toggleSubscribe}
+              onClick={handleSubscribe}
               className={`px-4 py-2 rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isSubscribed
                   ? theme === 'dark'
@@ -502,7 +503,7 @@ const VideoDetail = () => {
                   : 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
               }`}
             >
-              {isSubscribed ? "Unsubscribe" : "Subscribe"}
+              {isSubscribed ? "Subscribed" : "Subscribe"}
             </button>
           </div>
 
