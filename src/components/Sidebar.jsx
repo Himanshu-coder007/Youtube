@@ -19,11 +19,11 @@ const Sidebar = () => {
   ];
 
   const secondaryNavItems = [
-    { icon: '⭐', label: 'Get Premium' },
-    { icon: '⚙️', label: 'Settings' },
-    { icon: '📜', label: 'Report history' },
-    { icon: '❓', label: 'Help' },
-    { icon: '📩', label: 'Send feedback' },
+    { icon: '⭐', label: 'Get Premium', path: '/premium' },
+    { icon: '⚙️', label: 'Settings', path: '/settings' },
+    { icon: '📜', label: 'Report history', path: '/report-history' },
+    { icon: '❓', label: 'Help', path: '/help' },
+    { icon: '📩', label: 'Send feedback', path: '/feedback' },
   ];
 
   return (
@@ -80,15 +80,15 @@ const Sidebar = () => {
       {/* Premium & Settings Section */}
       <div className={`border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} pt-4`}>
         <ul className="space-y-1 mb-6">
-          {secondaryNavItems.map((item, index) => (
-            <li key={index}>
-              <button
+          {secondaryNavItems.map((item) => (
+            <li key={item.path}>
+              <Link
+                to={item.path}
                 className={`flex items-center w-full p-3 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
-                onClick={() => console.log(`${item.label} clicked`)}
               >
                 <span className="text-xl mr-4">{item.icon}</span>
                 <span>{item.label}</span>
-              </button>
+              </Link>
             </li>
           ))}
         </ul>
