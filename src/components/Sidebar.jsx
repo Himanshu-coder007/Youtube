@@ -7,7 +7,7 @@ const Sidebar = () => {
     { icon: '🏠', label: 'Home', path: '/' },
     { icon: '🔥', label: 'Trending', path: '/trending' },
     { icon: '🎮', label: 'Gaming', path: '/gaming' },
-    { icon: '💾', label: 'Saved Videos', path: '/saved-videos' },
+    { icon: '💾', label: 'Watch Later', path: '/saved-videos' },
     { icon: '❤️', label: 'Liked Videos', path: '/liked-videos' },
   ];
 
