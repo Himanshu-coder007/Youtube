@@ -1,6 +1,6 @@
 // src/components/Sidebar.jsx
 import React, { useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectSubscribedChannels } from '../store/subscribeSlice';
 import logo from '../assets/logo.svg';
@@ -10,6 +10,7 @@ const Sidebar = () => {
   const { theme } = useContext(ThemeContext);
   const subscribedChannels = useSelector(selectSubscribedChannels);
   const location = useLocation();
+  const navigate = useNavigate();
   
   const mainNavItems = [
     { icon: '🏠', label: 'Home', path: '/' },
@@ -32,10 +33,18 @@ const Sidebar = () => {
     return location.pathname === path;
   };
 
+  // Function to handle logo click
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
   return (
     <aside className={`w-64 h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} p-4 fixed top-0 left-0 shadow-sm border-r ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} overflow-y-auto`}>
       {/* YouTube Logo and Title */}
-      <div className="flex items-center mb-6 pl-2">
+      <div 
+        className="flex items-center mb-6 pl-2 cursor-pointer" 
+        onClick={handleLogoClick}
+      >
         <img 
           src={logo} 
           alt="YouTube Logo" 
@@ -76,7 +85,7 @@ const Sidebar = () => {
           {subscribedChannels.map((channel) => (
             <li key={channel.id}>
               <Link
-                to={`/channel/${channel.id}`}
+                
                 className={`flex items-center p-3 rounded-lg ${
                   isActive(`/channel/${channel.id}`)
                     ? theme === 'dark'
