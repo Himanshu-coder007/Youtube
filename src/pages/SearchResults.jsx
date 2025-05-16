@@ -61,7 +61,7 @@ const SearchResults = () => {
       
       <div className="flex items-center mb-6">
         <button 
-          onClick={() => navigate(-1)} 
+          onClick={() => navigate("/")} 
           className="mr-4 p-2 rounded-full hover:bg-gray-200"
           aria-label="Go back"
         >
