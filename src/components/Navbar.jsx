@@ -55,7 +55,7 @@ const Navbar = ({ initialQuery = '' }) => {
           <SearchBar initialQuery={initialQuery} onSearch={handleSearch} theme={theme} />
           <button
             onClick={handleVoiceSearch}
-            className={`ml-2 p-2 rounded-full ${isListening ? 'bg-red-100 animate-pulse' : theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'}`}
+            className={`ml-2 p-2 rounded-full cursor-pointer ${isListening ? 'bg-red-100 animate-pulse' : theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'}`}
             title="Voice Search"
           >
             <svg
@@ -78,7 +78,7 @@ const Navbar = ({ initialQuery = '' }) => {
       <div className="flex items-center space-x-4">
         <button 
           onClick={toggleTheme}
-          className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-300 focus:outline-none"
+          className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-300 focus:outline-none cursor-pointer"
         >
           {theme === 'dark' ? (
             <FiSun className="h-5 w-5 text-yellow-400" />
@@ -86,13 +86,13 @@ const Navbar = ({ initialQuery = '' }) => {
             <FiMoon className="h-5 w-5 text-gray-600" />
           )}
         </button>
-        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full cursor-pointer ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
           <MdApps className="h-5 w-5" style={{ color: theme === 'dark' ? 'white' : 'gray' }} />
         </button>
-        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full cursor-pointer ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
           <FaVideo className="h-5 w-5" style={{ color: theme === 'dark' ? 'white' : 'gray' }} />
         </button>
-        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full cursor-pointer ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -108,7 +108,7 @@ const Navbar = ({ initialQuery = '' }) => {
             />
           </svg>
         </button>
-        <button className={`flex items-center justify-center h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
+        <button className={`flex items-center justify-center h-10 w-10 rounded-full cursor-pointer ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} focus:outline-none`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
