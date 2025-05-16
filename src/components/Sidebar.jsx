@@ -1,6 +1,6 @@
 // src/components/Sidebar.jsx
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectSubscribedChannels } from '../store/subscribeSlice';
 import logo from '../assets/logo.svg';
@@ -9,6 +9,7 @@ import { ThemeContext } from '../context/ThemeContext';
 const Sidebar = () => {
   const { theme } = useContext(ThemeContext);
   const subscribedChannels = useSelector(selectSubscribedChannels);
+  const location = useLocation();
   
   const mainNavItems = [
     { icon: '🏠', label: 'Home', path: '/' },
@@ -25,6 +26,11 @@ const Sidebar = () => {
     { icon: '❓', label: 'Help', path: '/help' },
     { icon: '📩', label: 'Send feedback', path: '/feedback' },
   ];
+
+  // Function to check if a path is active
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   return (
     <aside className={`w-64 h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} p-4 fixed top-0 left-0 shadow-sm border-r ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} overflow-y-auto`}>
@@ -44,7 +50,15 @@ const Sidebar = () => {
           <li key={item.path}>
             <Link
               to={item.path}
-              className={`flex items-center p-3 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center p-3 rounded-lg ${
+                isActive(item.path) 
+                  ? theme === 'dark' 
+                    ? 'bg-gray-700 font-semibold' 
+                    : 'bg-gray-200 font-semibold'
+                  : theme === 'dark' 
+                    ? 'hover:bg-gray-800' 
+                    : 'hover:bg-gray-100'
+              }`}
             >
               <span className="text-xl mr-4">{item.icon}</span>
               <span>{item.label}</span>
@@ -63,7 +77,15 @@ const Sidebar = () => {
             <li key={channel.id}>
               <Link
                 to={`/channel/${channel.id}`}
-                className={`flex items-center p-3 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+                className={`flex items-center p-3 rounded-lg ${
+                  isActive(`/channel/${channel.id}`)
+                    ? theme === 'dark'
+                      ? 'bg-gray-700 font-semibold'
+                      : 'bg-gray-200 font-semibold'
+                    : theme === 'dark'
+                      ? 'hover:bg-gray-800'
+                      : 'hover:bg-gray-100'
+                }`}
               >
                 <img 
                   src={channel.image} 
@@ -84,7 +106,15 @@ const Sidebar = () => {
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center w-full p-3 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+                className={`flex items-center w-full p-3 rounded-lg ${
+                  isActive(item.path)
+                    ? theme === 'dark'
+                      ? 'bg-gray-700 font-semibold'
+                      : 'bg-gray-200 font-semibold'
+                    : theme === 'dark'
+                      ? 'hover:bg-gray-800'
+                      : 'hover:bg-gray-100'
+                }`}
               >
                 <span className="text-xl mr-4">{item.icon}</span>
                 <span>{item.label}</span>

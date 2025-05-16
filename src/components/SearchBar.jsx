@@ -20,7 +20,7 @@ const SearchBar = ({ initialQuery = '', onSearch, theme }) => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search..."
+          placeholder="Search & Enter"
           className={`w-full px-5 py-3 pr-12 ${theme === 'dark' ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'} border rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200`}
         />
         <button
