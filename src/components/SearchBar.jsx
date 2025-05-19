@@ -10,12 +10,14 @@ const SearchBar = ({ initialQuery = '', onSearch, theme }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(query);
+    if (query.trim()) {
+      onSearch(query);
+    }
   };
 
   const handleClear = () => {
     setQuery('');
-    onSearch('');
+    // Don't trigger search when clearing, just clear the input
   };
 
   return (
@@ -28,12 +30,12 @@ const SearchBar = ({ initialQuery = '', onSearch, theme }) => {
           placeholder="Search & Enter"
           className={`w-full px-5 py-3 pr-12 ${theme === 'dark' ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'} border rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200`}
         />
-        <button
-          type={query ? "button" : "submit"}
-          onClick={query ? handleClear : undefined}
-          className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-100'} focus:outline-none`}
-        >
-          {query ? (
+        {query && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className={`absolute right-10 top-1/2 transform -translate-y-1/2 p-2 rounded-full ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-100'} focus:outline-none`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -46,22 +48,26 @@ const SearchBar = ({ initialQuery = '', onSearch, theme }) => {
                 clipRule="evenodd"
               />
             </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke={theme === 'dark' ? 'white' : 'currentColor'}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          )}
+          </button>
+        )}
+        <button
+          type="submit"
+          className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-100'} focus:outline-none`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke={theme === 'dark' ? 'white' : 'currentColor'}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
         </button>
       </div>
     </form>

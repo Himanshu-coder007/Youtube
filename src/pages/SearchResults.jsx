@@ -9,6 +9,7 @@ const SearchResults = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [lastValidQuery, setLastValidQuery] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -22,6 +23,9 @@ const SearchResults = () => {
         const res = await fetchHomeVideos(searchQuery);
         setVideos(res.data.videos || []);
         setLoading(false);
+        if (searchQuery) {
+          setLastValidQuery(searchQuery);
+        }
       } catch (err) {
         console.error('Error fetching search results:', err);
         setError('Failed to load search results.');
@@ -31,11 +35,20 @@ const SearchResults = () => {
 
     if (searchQuery) {
       getVideos();
+    } else if (lastValidQuery) {
+      // If search is cleared but we have previous results, keep showing them
+      setLoading(false);
     } else {
       setVideos([]);
       setLoading(false);
     }
-  }, [searchQuery]);
+  }, [searchQuery, lastValidQuery]);
+
+  const handleSearch = (query) => {
+    if (query.trim()) {
+      navigate(`/results?q=${encodeURIComponent(query)}`);
+    }
+  };
 
   if (loading) return (
     <div className="flex justify-center items-center h-screen">
@@ -57,7 +70,7 @@ const SearchResults = () => {
 
   return (
     <div className="p-6 w-full">
-      <Navbar initialQuery={searchQuery} />
+      <Navbar initialQuery={searchQuery} onSearch={handleSearch} />
       
       <div className="flex items-center mb-6">
         <button 
@@ -69,13 +82,20 @@ const SearchResults = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
-        <h1 className="text-2xl font-bold">Search Results for "{searchQuery}"</h1>
+        {lastValidQuery && (
+          <h1 className="text-2xl font-bold">Search Results for "{lastValidQuery}"</h1>
+        )}
       </div>
       
-      {videos.length === 0 ? (
+      {videos.length === 0 && lastValidQuery ? (
         <div className="text-center mt-12">
-          <p className="text-xl text-gray-600">No videos found</p>
+          <p className="text-xl text-gray-600">No videos found for "{lastValidQuery}"</p>
           <p className="text-gray-500">Try a different search term</p>
+        </div>
+      ) : videos.length === 0 ? (
+        <div className="text-center mt-12">
+          <p className="text-xl text-gray-600">Search for videos</p>
+          <p className="text-gray-500">Enter a search term to find videos</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
