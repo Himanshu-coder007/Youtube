@@ -149,6 +149,41 @@ const VideoDetail = () => {
     );
   };
 
+  // Function to handle timestamp clicks from comments
+  const handleTimestampClick = (timestamp) => {
+    if (!videoRef.current) return;
+    
+    // Parse timestamp in format MM:SS or H:MM:SS
+    const parts = timestamp.split(':');
+    let seconds = 0;
+    
+    if (parts.length === 2) {
+      // MM:SS format
+      seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    } else if (parts.length === 3) {
+      // H:MM:SS format
+      seconds = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+    }
+    
+    // Seek to the timestamp
+    videoRef.current.currentTime = seconds;
+    
+    // Play the video if it's not already playing
+    if (videoRef.current.paused) {
+      handlePlay();
+    }
+    
+    // Highlight the video player briefly
+    if (videoRef.current.parentElement) {
+      videoRef.current.parentElement.style.boxShadow = `0 0 0 3px ${theme === 'dark' ? '#3b82f6' : '#2563eb'}`;
+      setTimeout(() => {
+        if (videoRef.current?.parentElement) {
+          videoRef.current.parentElement.style.boxShadow = '';
+        }
+      }, 1000);
+    }
+  };
+
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -342,7 +377,7 @@ const VideoDetail = () => {
         </button>
 
         {/* Video Player */}
-        <div className="bg-black rounded-xl overflow-hidden shadow-xl mb-8">
+        <div className="bg-black rounded-xl overflow-hidden shadow-xl mb-8 transition-all duration-300">
           {embedUrl ? (
             <div className="relative pt-[56.25%]">
               <iframe
@@ -672,7 +707,10 @@ const VideoDetail = () => {
         </div>
 
         {/* Comments Section */}
-        <CommentsSection videoId={id} channelId={video.channel.id} />
+        <CommentsSection 
+          channelId={video.channel.id} 
+          onTimestampClick={handleTimestampClick} 
+        />
       </div>
     </div>
   );
