@@ -149,38 +149,55 @@ const VideoDetail = () => {
     );
   };
 
-  // Function to handle timestamp clicks from comments
+  // Updated timestamp click handler
   const handleTimestampClick = (timestamp) => {
-    if (!videoRef.current) return;
+    if (!video) return;
     
-    // Parse timestamp in format MM:SS or H:MM:SS
-    const parts = timestamp.split(':');
+    // Convert timestamp (e.g., "1:23" or "1:23:45") to seconds
+    const parts = timestamp.split(':').map(part => parseInt(part));
     let seconds = 0;
     
-    if (parts.length === 2) {
-      // MM:SS format
-      seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-    } else if (parts.length === 3) {
-      // H:MM:SS format
-      seconds = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+    if (parts.length === 3) { // hh:mm:ss
+      seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+    } else if (parts.length === 2) { // mm:ss
+      seconds = parts[0] * 60 + parts[1];
+    } else { // ss
+      seconds = parts[0];
     }
     
-    // Seek to the timestamp
-    videoRef.current.currentTime = seconds;
-    
-    // Play the video if it's not already playing
-    if (videoRef.current.paused) {
-      handlePlay();
-    }
-    
-    // Highlight the video player briefly
-    if (videoRef.current.parentElement) {
-      videoRef.current.parentElement.style.boxShadow = `0 0 0 3px ${theme === 'dark' ? '#3b82f6' : '#2563eb'}`;
-      setTimeout(() => {
-        if (videoRef.current?.parentElement) {
-          videoRef.current.parentElement.style.boxShadow = '';
-        }
-      }, 1000);
+    // For YouTube embeds
+    if (video.video_url.includes('youtube.com') || video.video_url.includes('youtu.be')) {
+      const iframe = document.querySelector('iframe');
+      if (iframe) {
+        // Extract the video ID from the current src
+        const videoId = video.video_url.split('v=')[1];
+        
+        // Create a new URL with the start parameter
+        const newSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&start=${seconds}`;
+        
+        // Update the iframe src to force a reload at the new timestamp
+        iframe.src = newSrc;
+        
+        // Focus the iframe to ensure keyboard controls work
+        iframe.focus();
+      }
+    } 
+    // For native video player
+    else if (videoRef.current) {
+      videoRef.current.currentTime = seconds;
+      if (videoRef.current.paused) {
+        handlePlay();
+      }
+      
+      // Highlight the video player briefly
+      if (videoRef.current.parentElement) {
+        videoRef.current.parentElement.style.boxShadow = `0 0 0 3px ${theme === 'dark' ? '#3b82f6' : '#2563eb'}`;
+        setTimeout(() => {
+          if (videoRef.current?.parentElement) {
+            videoRef.current.parentElement.style.boxShadow = '';
+          }
+        }, 1000);
+      }
     }
   };
 
@@ -708,6 +725,7 @@ const VideoDetail = () => {
 
         {/* Comments Section */}
         <CommentsSection 
+          videoId={id}
           channelId={video.channel.id} 
           onTimestampClick={handleTimestampClick} 
         />

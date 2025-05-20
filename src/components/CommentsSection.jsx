@@ -2,8 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 
-const CommentsSection = ({ channelId, onTimestampClick }) => {
-  const { id: videoId } = useParams();
+const CommentsSection = ({ videoId, channelId, onTimestampClick }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
