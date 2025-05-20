@@ -1,9 +1,8 @@
-// src/components/CommentsSection.js
 import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 
-const CommentsSection = ({ channelId }) => {
+const CommentsSection = ({ channelId, onTimestampClick }) => {
   const { id: videoId } = useParams();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -24,6 +23,32 @@ const CommentsSection = ({ channelId }) => {
       setUserReactions(JSON.parse(storedReactions));
     }
   }, [videoId]);
+
+  // Function to parse comment text and detect timestamps
+  const parseCommentText = (text) => {
+    // Regular expression to match timestamps (e.g., 1:23, 0:45, 10:30)
+    const timestampRegex = /(\b\d{1,2}:\d{2}\b)/g;
+    
+    // Split the text into parts, separating timestamps
+    const parts = text.split(timestampRegex);
+    
+    return parts.map((part, index) => {
+      if (timestampRegex.test(part)) {
+        return (
+          <button
+            key={index}
+            onClick={() => onTimestampClick(part)}
+            className={`text-blue-500 hover:text-blue-600 underline ${
+              theme === 'dark' ? 'hover:text-blue-400' : 'hover:text-blue-700'
+            }`}
+          >
+            {part}
+          </button>
+        );
+      }
+      return part;
+    });
+  };
 
   const handleAddComment = (e) => {
     e.preventDefault();
@@ -326,7 +351,7 @@ const CommentsSection = ({ channelId }) => {
                         {formatDate(comment.timestamp)}
                       </span>
                     </div>
-                    <p className="mt-1">{comment.text}</p>
+                    <p className="mt-1">{parseCommentText(comment.text)}</p>
                     <div className="mt-2 flex items-center space-x-4">
                       <button
                         onClick={() => handleLikeComment(comment.id)}
